@@ -1,7 +1,7 @@
 import { getDb } from '@/utils/db.util';
 import * as schema from '@/database/schemas';
 import { BookDto, CreateBookDto } from '@/dtos/book.dto';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, sql } from 'drizzle-orm';
 
 const createBook = async (data: CreateBookDto): Promise<void> => {
   const db = await getDb();
@@ -29,8 +29,17 @@ const getBook = async (id: number): Promise<BookDto> => {
   const db = await getDb();
 
   const books = await db
-    .select()
+    .select({
+      id: schema.book.id,
+      name: schema.book.name,
+      score: sql<number>`avg(case when ${schema.borrowHistory.score} != null then ${schema.borrowHistory.score}::numeric(10, 2) else -1 end)`
+    })
     .from(schema.book)
+    .leftJoin(
+      schema.borrowHistory,
+      eq(schema.book.id, schema.borrowHistory.book_id)
+    )
+    .groupBy(schema.book.id)
     .where(eq(schema.book.id, id));
 
   if (!books.length) {
@@ -41,7 +50,8 @@ const getBook = async (id: number): Promise<BookDto> => {
 
   return {
     id: book.id,
-    name: book.name
+    name: book.name,
+    score: book.score
   };
 };
 

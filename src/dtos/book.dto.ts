@@ -1,14 +1,13 @@
-import { createSelectSchema } from 'drizzle-zod';
-import * as schema from '@/database/schemas';
 import { z } from 'zod';
 
 export const createBookDtoSchema = z.object({
   name: z.string().min(3).max(100)
 });
 
-export const bookDtoSchema = createSelectSchema(schema.book).pick({
-  id: true,
-  name: true
+export const bookDtoSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  score: z.number().optional()
 });
 
 export type CreateBookDto = z.infer<typeof createBookDtoSchema>;

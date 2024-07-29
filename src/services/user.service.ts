@@ -1,7 +1,7 @@
 import { getDb } from '@/utils/db.util';
 import * as schema from '@/database/schemas';
 import { CreateUserDto, UserDto } from '@/dtos/user.dto';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, isNotNull, isNull } from 'drizzle-orm';
 
 const createUser = async (data: CreateUserDto): Promise<void> => {
   const db = await getDb();
@@ -39,9 +39,42 @@ const getUser = async (id: number): Promise<UserDto> => {
 
   const user = users[0] as UserDto;
 
+  const pastBooks = await db
+    .select({
+      name: schema.book.name,
+      userScore: schema.borrowHistory.score
+    })
+    .from(schema.book)
+    .innerJoin(
+      schema.borrowHistory,
+      and(
+        eq(schema.book.id, schema.borrowHistory.book_id),
+        eq(schema.borrowHistory.user_id, user.id),
+        isNotNull(schema.borrowHistory.return_date)
+      )
+    );
+
+  const presentBooks = await db
+    .select({
+      name: schema.book.name
+    })
+    .from(schema.book)
+    .innerJoin(
+      schema.borrowHistory,
+      and(
+        eq(schema.book.id, schema.borrowHistory.book_id),
+        eq(schema.borrowHistory.user_id, user.id),
+        isNull(schema.borrowHistory.return_date)
+      )
+    );
+
   return {
     id: user.id,
-    name: user.name
+    name: user.name,
+    books: {
+      past: pastBooks,
+      present: presentBooks
+    }
   };
 };
 
