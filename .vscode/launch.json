@@ -1,0 +1,6 @@
+{
+  "type": "node-terminal",
+  "name": "[DEBUG]",
+  "request": "launch",
+  "command": "npm run start:dev"
+}
