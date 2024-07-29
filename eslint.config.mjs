@@ -42,11 +42,13 @@ export default [
           caughtErrorsIgnorePattern: '^_'
         }
       ],
-      'no-useless-constructor': 'off',
-      '@typescript-eslint/no-useless-constructor': 'off',
       'no-empty-function': 'off',
-      '@typescript-eslint/no-empty-function': 'off',
-      '@typescript-eslint/consistent-type-definitions': 'off'
+      '@typescript-eslint/no-empty-function': 'error',
+      '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+      '@typescript-eslint/no-unsafe-function-type': 'error',
+      '@typescript-eslint/no-wrapper-object-types': 'error',
+      '@typescript-eslint/no-empty-object-type': 'error',
+      '@typescript-eslint/no-explicit-any': 'error'
     },
     settings: {
       'import/resolver': {

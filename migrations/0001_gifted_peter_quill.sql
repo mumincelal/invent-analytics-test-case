@@ -1,0 +1,1 @@
+ALTER TABLE "borrow_history" ADD COLUMN "score" integer;

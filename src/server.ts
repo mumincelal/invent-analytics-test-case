@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import { errorMiddleware } from '@/middlewares/error.middleware';
+import userRoutes from '@/routes/user.route';
+import bookRoutes from '@/routes/book.route';
 
 dotenv.config();
 
@@ -79,6 +82,11 @@ const bootstrap = async () => {
   if (autoMigration) {
     await runDbMigration(dbHost, dbPort, dbUser, dbPassword, dbName);
   }
+
+  app.use(express.json());
+  app.use('/users', userRoutes);
+  app.use('/books', bookRoutes);
+  app.use(errorMiddleware);
 
   app
     .listen(port, () => {

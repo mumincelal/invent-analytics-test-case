@@ -1,7 +1,13 @@
 import { book } from '@/database/schemas/book.schema';
 import { user } from '@/database/schemas/user.schema';
 import { relations } from 'drizzle-orm';
-import { index, pgTable, serial, timestamp } from 'drizzle-orm/pg-core';
+import {
+  index,
+  integer,
+  pgTable,
+  serial,
+  timestamp
+} from 'drizzle-orm/pg-core';
 
 export const borrowHistory = pgTable(
   'borrow_history',
@@ -9,6 +15,7 @@ export const borrowHistory = pgTable(
     id: serial('id').primaryKey().notNull(),
     book_id: serial('book_id').notNull(),
     user_id: serial('user_id').notNull(),
+    score: integer('score'),
     borrow_date: timestamp('borrow_date', {
       mode: 'string',
       withTimezone: true
